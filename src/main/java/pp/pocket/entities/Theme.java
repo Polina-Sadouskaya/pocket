@@ -3,19 +3,19 @@ package pp.pocket.entities;
 public class Theme {
     private int id;
     private String name;
-    private String type;
+    private int type;
     private int userId;
 
     public Theme(){}
 
-    public Theme(int id, String name, String type, int userId) {
+    public Theme(int id, String name, int type, int userId) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.userId=userId;
     }
 
-    public Theme(String name, String type) {
+    public Theme(String name, int type) {
         this.name = name;
         this.type = type;
     }
@@ -36,11 +36,11 @@ public class Theme {
         this.name = name;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 

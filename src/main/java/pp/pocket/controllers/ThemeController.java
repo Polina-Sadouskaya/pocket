@@ -1,37 +1,43 @@
 package pp.pocket.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pp.pocket.entities.Theme;
-import pp.pocket.response.BaseResponse;
 import pp.pocket.services.ThemeService;
-import pp.pocket.services.UserService;
 
-import java.util.List;
+import java.util.HashMap;
 
 
 @RestController
 @RequestMapping("/themes")
 public class ThemeController extends Controller {
+    public static int mockUserId = 1;
+    public HashMap<String, Error> error = new HashMap<>();
     @GetMapping
-    public BaseResponse getThemes(@RequestHeader(value="Authorization") String creds) {
+    public ResponseEntity getThemes() {
             try{
-                int userId = UserService.checkValidCreds(creds);
-                List result = ThemeService.getThemes(String.valueOf(userId));
-                return new BaseResponse(SUCCESS_STATUS, SUCCESS_CODE, result);
+                HashMap<String, Theme> result = ThemeService.getThemes(mockUserId);
+                return new ResponseEntity(result.values(), HttpStatus.OK);
             } catch (Exception e){
-                return new BaseResponse(ERROR_STATUS, ERROR_CODE, e.getMessage());
+                error.clear();
+                error.put("error", new Error(e.getLocalizedMessage()));
+                return new ResponseEntity(error.values(), HttpStatus.BAD_REQUEST);
             }
     }
 
     @PostMapping
-    public BaseResponse theme(@RequestHeader(value="Authorization") String creds, @RequestBody Theme request){
+    public ResponseEntity theme(@RequestBody Theme request){
             try{
-                int userId = UserService.checkValidCreds(creds);
-                request.setUserId(userId);
-                Theme result = ThemeService.add(request);
-                return new BaseResponse(SUCCESS_STATUS, SUCCESS_CODE_CREATED, result);
+                request.setUserId(mockUserId);
+                Theme createdOne = ThemeService.add(request);
+                HashMap<String, Theme> result = new HashMap<>();
+                result.put("created", createdOne);
+                return new ResponseEntity(result.values(), HttpStatus.CREATED);
             } catch (Exception e){
-                return new BaseResponse(ERROR_STATUS, ERROR_CODE, e.getMessage());
+                error.clear();
+                error.put("error", new Error(e.getLocalizedMessage()));
+                return new ResponseEntity(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
             }
     }
 }

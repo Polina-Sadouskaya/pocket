@@ -4,16 +4,16 @@ import pp.pocket.dbhelper.DBHelper;
 import pp.pocket.entities.Theme;
 
 import java.sql.SQLException;
-import java.util.List;
+import java.util.HashMap;
 
 public class ThemeService {
-    public static List<Theme> getThemes(String userId) throws SQLException, ClassNotFoundException {
-        List<Theme> result = null;
+    public static HashMap<String, Theme> getThemes(int userId) throws SQLException, ClassNotFoundException {
+        HashMap<String, Theme> result = null;
         try {
             DBHelper.connect();
             result = DBHelper.readThemes(userId);
         } finally {
-            DBHelper.CloseDB();
+            DBHelper.disconnect();
         }
         return result;
     }
@@ -25,7 +25,7 @@ public class ThemeService {
             DBHelper.connect();
             DBHelper.addTheme(theme);
         } finally {
-            DBHelper.CloseDB();
+            DBHelper.disconnect();
         }
         return result;
     }
